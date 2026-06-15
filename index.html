@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Futuristic Dark Registration Form</title>
+    <style>
+        /* --- CSS STYLING --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #0d0e12;
+            /* Subtle dark grid background effect */
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 20px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        /* Glowing background blobs for depth */
+        .bg-glow {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, #7928ca, #ff0080);
+            filter: blur(120px);
+            opacity: 0.3;
+            z-index: 1;
+            border-radius: 50%;
+        }
+        .bg-glow.left { top: 10%; left: 10%; }
+        .bg-glow.right { bottom: 10%; right: 10%; background: linear-gradient(135deg, #0070f3, #00dfd8); }
+
+        .container {
+            background: rgba(22, 24, 30, 0.8);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 440px;
+            padding: 40px 35px;
+            z-index: 2;
+            position: relative;
+        }
+
+        .container h2 {
+            text-align: center;
+            margin-bottom: 8px;
+            color: #fff;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .container p.subtitle {
+            text-align: center;
+            color: #8f9cae;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #cbd5e1;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            background-color: #1a1d24;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            font-size: 15px;
+            color: #fff;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .form-group input::placeholder {
+            color: #4a5568;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #00dfd8;
+            box-shadow: 0 0 0 3px rgba(0, 223, 216, 0.15);
+            background-color: #1e222b;
+        }
+
+        /* Error States styling for Dark Theme */
+        .form-group.error input {
+            border-color: #ff4a6b;
+            box-shadow: 0 0 0 3px rgba(255, 74, 107, 0.15);
+        }
+
+        .form-group .error-msg {
+            color: #ff4a6b;
+            font-size: 12px;
+            margin-top: 6px;
+            display: none;
+            font-weight: 500;
+        }
+
+        .form-group.error .error-msg {
+            display: block;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(90deg, #7928ca 0%, #0070f3 100%);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(121, 40, 202, 0.3);
+        }
+
+        .btn-submit:hover {
+            filter: brightness(1.1);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(0, 112, 243, 0.4);
+        }
+
+        .btn-submit:active {
+            transform: translateY(1px);
+        }
+
+        /* --- POPUP MODAL STYLING --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 5, 8, 0.85);
+            backdrop-filter: blur(6px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 999;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal {
+            background: #16181e;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 35px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+            max-width: 360px;
+            width: 90%;
+            transform: translateY(20px) scale(0.95);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0) scale(1);
+        }
+
+        .modal .icon-box {
+            width: 60px;
+            height: 60px;
+            background: rgba(0, 223, 216, 0.1);
+            border: 2px solid #00dfd8;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 20px auto;
+            box-shadow: 0 0 15px rgba(0, 223, 216, 0.2);
+        }
+
+        .modal .icon {
+            font-size: 28px;
+            color: #00dfd8;
+            font-weight: bold;
+        }
+
+        .modal h3 {
+            margin-bottom: 8px;
+            color: #fff;
+            font-size: 22px;
+        }
+
+        .modal p {
+            color: #8f9cae;
+            margin-bottom: 24px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .btn-close {
+            background: #00dfd8;
+            color: #0d0e12;
+            border: none;
+            padding: 10px 28px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0, 223, 216, 0.3);
+        }
+
+        .btn-close:hover {
+            background: #00b911; /* fallback or shift behavior */
+            background: linear-gradient(90deg, #00dfd8, #0070f3);
+            color: white;
+            box-shadow: 0 6px 15px rgba(0, 112, 243, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ambient background glows -->
+    <div class="bg-glow left"></div>
+    <div class="bg-glow right"></div>
+
+    <div class="container">
+        <h2>Create Account</h2>
+        <p class="subtitle">Join our platform in just a few seconds.</p>
+        
+        <form id="registrationForm" novalidate>
+            <!-- Username -->
+            <div class="form-group" id="usernameGroup">
+                <label for="username">Username</label>
+                <input type="text" id="username" placeholder="e.g., cyber_punk">
+                <div class="error-msg">Username must be at least 3 characters.</div>
+            </div>
+
+            <!-- Email -->
+            <div class="form-group" id="emailGroup">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" placeholder="name@example.com">
+                <div class="error-msg">Please enter a valid email address.</div>
+            </div>
+
+            <!-- Password -->
+            <div class="form-group" id="passwordGroup">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Min. 6 characters">
+                <div class="error-msg">Password must be at least 6 characters.</div>
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="form-group" id="confirmPasswordGroup">
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" placeholder="Repeat your password">
+                <div class="error-msg">Passwords do not match.</div>
+            </div>
+
+            <button type="submit" class="btn-submit">Register Now</button>
+        </form>
+    </div>
+
+    <!-- Success Popup Modal -->
+    <div class="modal-overlay" id="successModal">
+        <div class="modal">
+            <div class="icon-box">
+                <div class="icon">✓</div>
+            </div>
+            <h3>Successfully Registered!</h3>
+            <p>Your account setup is complete. Welcome to the future of web spaces.</p>
+            <button class="btn-close" id="closeModalBtn">Get Started</button>
+        </div>
+    </div>
+
+    <script>
+        // --- JAVASCRIPT VALIDATION ---
+        const form = document.getElementById('registrationForm');
+        const username = document.getElementById('username');
+        const email = document.getElementById('email');
+        const password = document.getElementById('password');
+        const confirmPassword = document.getElementById('confirmPassword');
+        
+        const successModal = document.getElementById('successModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+
+        function showError(input, isError) {
+            const formGroup = input.parentElement;
+            if (isError) {
+                formGroup.classList.add('error');
+            } else {
+                formGroup.classList.remove('error');
+            }
+        }
+
+        function isValidEmail(emailVal) {
+            const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return re.test(String(emailVal).toLowerCase());
+        }
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            let isFormValid = true;
+
+            if (username.value.trim().length < 3) {
+                showError(username, true);
+                isFormValid = false;
+            } else {
+                showError(username, false);
+            }
+
+            if (!isValidEmail(email.value.trim())) {
+                showError(email, true);
+                isFormValid = false;
+            } else {
+                showError(email, false);
+            }
+
+            if (password.value.trim().length < 6) {
+                showError(password, true);
+                isFormValid = false;
+            } else {
+                showError(password, false);
+            }
+
+            if (confirmPassword.value.trim() !== password.value.trim() || confirmPassword.value.trim() === "") {
+                showError(confirmPassword, true);
+                isFormValid = false;
+            } else {
+                showError(confirmPassword, false);
+            }
+
+            if (isFormValid) {
+                successModal.classList.add('active');
+            }
+        });
+
+        // Close Modal & Clear data
+        closeModalBtn.addEventListener('click', function() {
+            successModal.classList.remove('active');
+            form.reset();
+        });
+    </script>
+</body>
+</html>
